@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Support Radio{% endblock %}</title>
+
+  <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+
+  <header>
+    <h1>Support Radio</h1>
+    <nav>
+      <a href="/">Главная</a>
+      <a href="/wheel">Колесо фортуны</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <small>Internal support tool</small>
+  </footer>
+
+</body>
+</html>
