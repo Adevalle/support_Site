@@ -1,14 +1,53 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>ДИТ.Роботизация.fm</title>
 
-{% block title %}Support Radio — Эфир{% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Comfortaa:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
 
-{% block content %}
-  <h2>Сейчас в эфире</h2>
-    <p> Текущий трек id {{ track_id }}</p>
-  <iframe
-    src="https://music.yandex.ru/iframe/#track/{{ track_id }}"
-    width="300"
-    height="80"
-    frameborder="0">
-  </iframe>
-{% endblock %}
+<header class="header">
+    <div class="logo">
+        ДИТ.Роботизация.fm
+    </div>
+
+    <nav class="menu">
+        <a href="/">Главная</a>
+        <a href="/wheel">Колесо фортуны</a>
+        <a href="/about">О проекте</a>
+    </nav>
+</header>
+
+<main class="content">
+    <h1 class="title">ДИТ.Роботизация.fm</h1>
+
+    <div class="player-block">
+        <div class="player">
+            <!-- Яндекс Музыка iframe -->
+            <iframe
+                src="https://music.yandex.ru/iframe/#track/{{ track_id }}"
+                width="300"
+                height="150"
+                frameborder="0"
+                allow="autoplay">
+            </iframe>
+        </div>
+
+        <div class="info">
+            <h2>Сегодня в эфире:</h2>
+            <p class="track-title">{{ track_title }}</p>
+            <p class="track-canvas">{{ description }}</p>
+            <p class = "info-text">Слушайте песню дня поддержки!</p>
+            <p class="update-time">Обновление каждый четверг в 10:10</p>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
