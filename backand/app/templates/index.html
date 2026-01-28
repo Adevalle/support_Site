@@ -4,9 +4,9 @@
 
 {% block content %}
   <h2>Сейчас в эфире</h2>
-
+    <p> Текущий трек id {{ track_id }}</p>
   <iframe
-    src="https://music.yandex.ru/iframe/#track/123456"
+    src="https://music.yandex.ru/iframe/#track/{{ track_id }}"
     width="300"
     height="80"
     frameborder="0">
