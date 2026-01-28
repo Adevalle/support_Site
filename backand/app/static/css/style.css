@@ -4,6 +4,24 @@
     padding: 0;
 
 }
+@keyframes fadeIn {
+  from { opacity: 0; } /* Начальное состояние — полностью прозрачный */
+  to   { opacity: 1; } /* Конечное состояние — полностью видимый */
+}
+@keyframes sliding {
+  from {
+    margin-left: 100%;
+    width: 10%;
+    opacity: 0;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+    opacity: 1;
+  }
+}
+
 
 body {
     background: #ffffff;
@@ -15,6 +33,7 @@ body {
 /* HEADER */
 
 .header {
+    animation: fadeIn 3s ease-out;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -60,7 +79,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 40px;
+    gap: 60px;
+    animation-duration: 3s;
+    animation-name: sliding;
 }
 
 .player iframe {
@@ -69,34 +90,30 @@ body {
 
 
 .info h2 {
-    font-size: 15px;
+    font-size: 25px;
     font-width: 400;
     font-family: 'Comfortaa', sans-serif;
     margin-bottom: 12px;
 }
 
 .track-title {
-    font-size: 20px;
+    font-size: 32px;
     color: #8b1c3d;
     margin-bottom: 16px;
     font-family: 'Oswald', sans-serif;
 }
-
-.description {
-    font-size: 2px;
+.track-canvas {
+    font-size: 21px;
     color: #8b1c3d;
-    margin-bottom: 2px;
+    margin-bottom: 15px;
     font-family: 'Oswald', sans-serif;
 }
 .info-text {
     max-width: 300px;
     font-family: 'Comfortaa', sans-serif;
 }
-
-
-
 .update-time {
-    margin-top: 12px;
+    margin-top: 25px;
     font-size: 14px;
     font-family: 'Comfortaa', sans-serif;
     color: #666;
