@@ -5,4 +5,3 @@ class Track(BaseModel):
     id:str
     title:str
     description:str
-    cover: str | None = None

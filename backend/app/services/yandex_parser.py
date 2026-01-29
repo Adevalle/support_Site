@@ -12,7 +12,11 @@ def parse_track_id(url: str) -> str:
 
 def fetch_track_metadata(url: str) -> dict:
     headers = {
-        "User-Agent": "Mozilla/5.0"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/121.0.0.0 Safari/537.36",
+        "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8",
+        "Accept": "text/html,application/xhtml+xml"
     }
 
     response = requests.get(url, headers=headers, timeout=10)
@@ -22,13 +26,11 @@ def fetch_track_metadata(url: str) -> dict:
 
     title_tag = soup.find("meta", property="og:title")
     description_tag = soup.find("meta", property="og:description")
-    image_tag = soup.find("meta", property="og:image")
 
     if not title_tag:
-        raise ValueError("Error get name song")
+        raise print("Error get nsme")
 
     return {
         "title": title_tag["content"],
         "description": description_tag["content"],
-        "cover": image_tag["content"] if image_tag else None
     }
