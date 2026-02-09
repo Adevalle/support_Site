@@ -6,6 +6,11 @@ from fastapi.staticfiles import StaticFiles
 from app.api.track import router as track_router
 from app.storage.track_stage import CURRENT_TRACK
 
+from app.db.database import engine
+from app.db.models import Base
+from app.db.models import Track
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 app.include_router(track_router)
 
@@ -23,3 +28,17 @@ async def index(request: Request):
             "track_title": CURRENT_TRACK["title"]
         }
     )
+
+'''< h2 > Сегодня
+в
+эфире: < / h2 >
+< p
+
+
+class ="track-title" > {{track_title}} < / p >
+
+< p
+
+
+class ="track-canvas" > {{description}} < / p >
+'''

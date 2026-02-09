@@ -1,7 +1,20 @@
-from pydantic import BaseModel,HttpUrl
+from pydantic import BaseModel
+from datetime import datetime
 
-class Track(BaseModel):
-    url:str
-    id:str
-    title:str
-    description:str
+
+class TrackCreate(BaseModel):
+    title: str
+    url: str
+    added_by: str | None = None
+
+
+class TrackOut(BaseModel):
+    id: int
+    title: str
+    url: str
+    added_at: datetime
+    added_by: str | None
+    is_active: bool
+
+    class Config:
+        from_attributes = True
