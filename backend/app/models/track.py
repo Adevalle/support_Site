@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class TrackCreate(BaseModel):
-    title: str
+    title: str |None = None
     url: str
     added_by: str | None = None
 

@@ -118,3 +118,37 @@ body {
     font-family: 'Comfortaa', sans-serif;
     color: #666;
 }
+
+
+.track-history {
+    margin-top: 40px;
+
+}
+
+.track-history h3 {
+    font-size: 18px;
+    color: #8b1c3d;
+    margin-bottom: 16px;
+    text-align: center;
+    margin-bottom: 60px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#track-list {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+
+}
+
+.track-list li {
+    cursor: pointer;
+    padding: 6px 0;
+    opacity: 0.8;
+    justify-content: center;
+}
+
+#track-list li:hover {
+    opacity: 1;
+    text-decoration: underline;
+}

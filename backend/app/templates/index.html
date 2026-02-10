@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Поддержка.fm</title>
@@ -10,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src = "/static/js/player.js"></script>
 </head>
 <body>
 
@@ -32,7 +34,7 @@
         <div class="player">
             <!-- Яндекс Музыка iframe -->
             <iframe
-                src="https://music.yandex.ru/iframe/#track/{{ track_id }}"
+                src="https://music.yandex.ru/iframe/#track/{{ current_track.yandex_track_id }}"
                 width="250"
                 height="250"
                 frameborder="0"
@@ -46,6 +48,19 @@
             <p class="update-time">Обновление каждый четверг в 10:10</p>
         </div>
     </div>
+<section class="track-history">
+    <h3>Ранее в эфире</h3>
+    <ul id="track-list">
+        {% for track in history %}
+            <li data-track-id="{{ track.yandex_track_id }}">
+                <iframe
+                        src="https://music.yandex.ru/iframe/#track/{{ track.yandex_track_id }}"
+                        width="300" height="80" frameborder="0" allow="autoplay">
+                </iframe>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
 </main>
 
 </body>

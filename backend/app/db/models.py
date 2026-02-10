@@ -8,8 +8,9 @@ class Track(Base):
     __tablename__ = "tracks"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
+    title = Column(String, nullable=True)
     url = Column(String, nullable=False)
+    yandex_track_id = Column(String, nullable=False)
     added_at = Column(DateTime, default=datetime.utcnow)
     added_by = Column(String, nullable=True)
     is_active = Column(Boolean, default=False)

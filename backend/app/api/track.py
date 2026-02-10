@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.services.yandex_parser import parse_track_id, fetch_track_metadata
-from app.storage.track_stage import CURRENT_TRACK
 
 from sqlalchemy.orm import Session
 from app.db.database import get_db
@@ -8,23 +7,27 @@ from app.db.models import Track
 from app.models.track import TrackCreate, TrackOut
 
 router = APIRouter(prefix="/api/tracks", tags=["tracks"])
-@router.post("", response_model=TrackOut)
-def add_track(track: TrackCreate, db: Session = Depends(get_db)):
-    # снимаем активность со всех треков
-    db.query(Track).update({Track.is_active: False})
+@router.post("/current", response_model=TrackOut)
 
-    new_track = Track(
-        title=track.title,
-        url=track.url,
-        added_by=track.added_by,
-        is_active=True,
+def set_current_track(payload: TrackCreate, db: Session = Depends(get_db)):
+    track_id = parse_track_id(payload.url)
+
+    # Снимаем текущий трек
+    db.query(Track).filter(Track.is_active == True).update(
+        {"is_active": False}
     )
 
-    db.add(new_track)
-    db.commit()
-    db.refresh(new_track)
+    track = Track(
+        url=payload.url,
+        yandex_track_id=track_id,
+        is_active=True
+    )
 
-    return new_track
+    db.add(track)
+    db.commit()
+    db.refresh(track)
+
+    return track
 
 @router.get("/current", response_model=TrackOut)
 def get_current_track(db: Session = Depends(get_db)):

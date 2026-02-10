@@ -4,11 +4,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from app.api.track import router as track_router
-from app.storage.track_stage import CURRENT_TRACK
 
-from app.db.database import engine
-from app.db.models import Base
-from app.db.models import Track
+
+from sqlalchemy.orm import Session
+from app.db.database import SessionLocal,engine
+from app.db.models import Base, Track
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -19,13 +19,28 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    db: Session = SessionLocal()
+
+    current_track = (
+        db.query(Track)
+        .filter(Track.is_active == True)
+        .first()
+    )
+
+    history = (
+        db.query(Track)
+        .order_by(Track.added_at.desc())
+        .filter(Track.is_active == False)
+        .limit(10)
+        .all()
+    )
+
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "track_id": CURRENT_TRACK["id"],
-            "description": CURRENT_TRACK["description"],
-            "track_title": CURRENT_TRACK["title"]
+            "current_track": current_track,
+            "history": history,
         }
     )
 
