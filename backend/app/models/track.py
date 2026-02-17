@@ -10,10 +10,10 @@ class TrackCreate(BaseModel):
 
 class TrackOut(BaseModel):
     id: int
-    title: str
+    title: str | None = None
     url: str
     added_at: datetime
-    added_by: str | None
+    added_by: str | None = None
     is_active: bool
 
     class Config:

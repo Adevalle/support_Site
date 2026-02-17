@@ -8,7 +8,6 @@ from app.models.track import TrackCreate, TrackOut
 
 router = APIRouter(prefix="/api/tracks", tags=["tracks"])
 @router.post("/current", response_model=TrackOut)
-
 def set_current_track(payload: TrackCreate, db: Session = Depends(get_db)):
     track_id = parse_track_id(payload.url)
 

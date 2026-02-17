@@ -43,17 +43,3 @@ async def index(request: Request):
             "history": history,
         }
     )
-
-'''< h2 > Сегодня
-в
-эфире: < / h2 >
-< p
-
-
-class ="track-title" > {{track_title}} < / p >
-
-< p
-
-
-class ="track-canvas" > {{description}} < / p >
-'''
