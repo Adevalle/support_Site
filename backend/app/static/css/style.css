@@ -138,6 +138,8 @@ body {
     list-style: none;
     padding: 0;
     text-align: center;
+    cursor:pointer;
+    transition: opacity:0.2s ease;
 
 }
 
@@ -151,4 +153,35 @@ body {
 #track-list li:hover {
     opacity: 1;
     text-decoration: underline;
+}
+
+/* Подсветка активного трека */
+#track-list li.active {
+    font-weight: 600;
+    color: #8b1c3d;
+}
+
+/* Кнопка текущего трека */
+#current-track-btn {
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #8b1c3d;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#current-track-btn:hover {
+    opacity: 0.9;
+}
+
+/* Плавная смена плеера */
+.player iframe {
+    transition: opacity 0.3s ease;
+}
+
+.player iframe.fade-out {
+    opacity: 0;
 }

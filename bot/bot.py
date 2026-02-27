@@ -1,59 +1,69 @@
 import requests
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from config import BOT_TOKEN, API_URL, ADMINS
 
-bot = Bot(BOT_TOKEN)
-dp = Dispatcher()
+from config import BOT_TOKEN, ADMINS, API_URL
+
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(bot)
 
 
 def is_admin(user_id):
     return user_id in ADMINS
 
 
-@dp.message(Command("start"))
+@dp.message_handler(commands=["start"])
 async def start(message: types.Message):
     if not is_admin(message.from_user.id):
         await message.answer("Нет доступа.")
         return
 
     await message.answer(
-        "Поддержка.fm бот\n\n"
-        "Добавление трека:\n"
-        "/add ссылка | название"
+        "Бот поддержки.fm\n\n"
+        "Формат добавления:\n"
+        "/add <url> | <title>"
     )
 
 
-@dp.message(Command("add"))
+@dp.message_handler(commands=["add"])
 async def add_track(message: types.Message):
     if not is_admin(message.from_user.id):
         return
 
-    args = message.text.replace("/add", "").strip()
-
-    if "|" in args:
-        url, title = [x.strip() for x in args.split("|", 1)]
-    else:
-        url , title = args, None
-
-
-    payload = {
-        "url": url,
-        "title": title
-    }
-
     try:
-        r = requests.post(API_URL, json=payload, timeout=10)
+        args = message.get_args()
 
-        if r.status_code == 200:
-            await message.answer("Трек добавлен.")
+        if "|" not in args:
+            await message.answer(
+                "Формат:\n"
+                "/add ссылка | Название трека"
+            )
+            return
+
+        url, title = [x.strip() for x in args.split("|", 1)]
+
+        if not url or not title:
+            await message.answer("Ссылка и название обязательны.")
+            return
+
+        # вытаскиваем id из url
+        yandex_track_id = url.rstrip("/").split("/")[-1]
+
+        payload = {
+            "url": url,
+            "title": title,
+            "yandex_track_id": yandex_track_id
+        }
+
+        response = requests.post(
+            f"{API_URL}/",
+            json=payload
+        )
+
+        if response.status_code == 200:
+            await message.answer("Трек успешно добавлен.")
         else:
-            await message.answer(f"Ошибка API:\n{r.text}")
+            await message.answer(f"Ошибка API:\n{response.text}")
 
     except Exception as e:
-        await message.answer(f"Ошибка: {e}")
+        await message.answer(f"Ошибка:\n{str(e)}")
 
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(dp.start_polling(bot))

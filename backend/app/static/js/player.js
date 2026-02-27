@@ -1,53 +1,47 @@
-async function loadTrackHistory() {
-    const response = await fetch("/api/tracks/history");
-    const tracks = await response.json();
+function updatePlayer(trackId) {
+    const iframe = document.getElementById("main-player");
 
-    const list = document.getElementById("track-list");
-    list.innerHTML = "";
+    // анимация исчезновения
+    iframe.classList.add("fade-out");
 
-    tracks.forEach(track => {
-        const li = document.createElement("li");
-        li.textContent = track.title;
-        li.onclick = () => setLocalTrack(track.url);
-        list.appendChild(li);
+    setTimeout(() => {
+        iframe.src = `https://music.yandex.ru/iframe/#track/${trackId}`;
+        iframe.classList.remove("fade-out");
+    }, 300);
+
+    setActiveTrack(trackId);
+}
+
+function setActiveTrack(trackId) {
+    const items = document.querySelectorAll("#track-list li");
+
+    items.forEach(item => {
+        if (item.dataset.trackId === trackId) {
+            item.classList.add("active");
+        } else {
+            item.classList.remove("active");
+        }
     });
 }
 
-function setLocalTrack(url) {
-    localStorage.setItem("localTrackUrl", url)
-    updatePlayer(url)
-}
-
-function updatePlayer(url)}{
-    const iframe = document.getElementById("player")
-}
-
-async function loadInitialTrack() {
-    const localTrack = localStorage.getItem("localTrackUrl");
-
-    if (localTrack) {
-        updatePlayer(localTrack);
-        return;
-    }
-
-    const response = await fetch("/api/tracks/current");
-    const track = await response.json();
-    updatePlayer(track.url);
-}
 document.addEventListener("DOMContentLoaded", () => {
-    const iframe = document.querySelector(".player iframe");
+
+    // История
     const items = document.querySelectorAll("#track-list li");
 
     items.forEach(item => {
         item.addEventListener("click", () => {
             const trackId = item.dataset.trackId;
-            iframe.src = 'https://music.yandex.ru/iframe/#track/${trackId}';
+            updatePlayer(trackId);
         });
     });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadInitialTrack();
-    loadTrackHistory();
-});
+    // Кнопка "Слушать текущий"
+    const currentBtn = document.getElementById("current-track-btn");
 
+    currentBtn.addEventListener("click", () => {
+        const trackId = currentBtn.dataset.trackId;
+        updatePlayer(trackId);
+    });
+
+});

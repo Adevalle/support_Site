@@ -34,6 +34,7 @@
         <div class="player">
             <!-- Яндекс Музыка iframe -->
             <iframe
+                id="main-player"
                 src="https://music.yandex.ru/iframe/#track/{{ current_track.yandex_track_id }}"
                 width="250"
                 height="250"
@@ -46,6 +47,9 @@
         <div class="info">
             <p class="info-text">Слушайте песню дня поддержки!</p>
             <p class="update-time">Обновление каждый четверг в 10:10</p>
+            <button id="current-track-btn" data-track-id="{{ current_track.yandex_track_id }}">
+            Слушать текущий
+            </button>
         </div>
     </div>
 <section class="track-history">
@@ -53,10 +57,7 @@
     <ul id="track-list">
         {% for track in history %}
             <li data-track-id="{{ track.yandex_track_id }}">
-                <iframe
-                        src="https://music.yandex.ru/iframe/#track/{{ track.yandex_track_id }}"
-                        width="300" height="80" frameborder="0" allow="autoplay">
-                </iframe>
+                {{ track.title or track.yandex_track_id }}
             </li>
         {% endfor %}
     </ul>

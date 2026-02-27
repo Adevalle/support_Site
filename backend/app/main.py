@@ -4,15 +4,16 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
 from app.api.track import router as track_router
-
-
-from sqlalchemy.orm import Session
 from app.db.database import SessionLocal,engine
 from app.db.models import Base, Track
+
+from sqlalchemy.orm import Session
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(track_router)
+
 
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
