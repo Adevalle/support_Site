@@ -57,7 +57,7 @@
     <ul id="track-list">
         {% for track in history %}
             <li data-track-id="{{ track.yandex_track_id }}">
-                {{ track.title or track.yandex_track_id }}
+                {{ track.title or track.yandex_track_id }} — добавил @{{ track.admin.username }}
             </li>
         {% endfor %}
     </ul>

@@ -3,9 +3,11 @@ from datetime import datetime
 
 
 class TrackCreate(BaseModel):
+
     title: str |None = None
     url: str
     added_by: str | None = None
+    telegram_id: int
 
 
 class TrackOut(BaseModel):

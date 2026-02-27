@@ -3,10 +3,11 @@ from app.services.yandex_parser import parse_track_id, fetch_track_metadata
 
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.db.models import Track
+from app.db.models import Track, Admin
 from app.models.track import TrackCreate, TrackOut
 
 router = APIRouter(prefix="/api/tracks", tags=["tracks"])
+
 @router.post("/current", response_model=TrackOut)
 def set_current_track(payload: TrackCreate, db: Session = Depends(get_db)):
     track_id = parse_track_id(payload.url)
@@ -15,13 +16,24 @@ def set_current_track(payload: TrackCreate, db: Session = Depends(get_db)):
     db.query(Track).filter(Track.is_active == True).update(
         {"is_active": False}
     )
+    admin = db.query(Admin).filter(
+        Admin.telegram_id == payload.telegram_id
+    ).first()
+
+    if not admin:
+        raise HTTPException(400, "Admin not found")
+
 
     track = Track(
+        title=payload.title,
         url=payload.url,
         yandex_track_id=track_id,
-        is_active=True
-    )
+        added_by=payload.added_by,
+        is_active=True,
+        admin_id = admin.telegram_id,
 
+    )
+    print(track.title)
     db.add(track)
     db.commit()
     db.refresh(track)
