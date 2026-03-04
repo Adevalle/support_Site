@@ -11,8 +11,7 @@ bot = Bot(BOT_TOKEN)
 dpa = Dispatcher()
 
 def is_admin(telegram_id: int) -> bool:
-    URL = GET_ADMIN.format("api/admin/get_admin")
-    response = requests.get(URL, params={"telegram_id": telegram_id})
+    response = requests.get(f"{API_URL}/admin/get_admin", params={"telegram_id": telegram_id})
     if response.status_code == 200:
         return True
     else:
@@ -54,8 +53,7 @@ async def process_title(message: Message, state: FSMContext):
     }
 
     try:
-        URL = API_URL.format("api/tracks/current")
-        response = requests.post(URL, json=payload)
+        response = requests.post(f"{API_URL}/tracks/current", json=payload)
 
         if response.status_code == 200:
             await message.answer("Трек успешно добавлен.")
