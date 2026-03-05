@@ -56,7 +56,18 @@ def get_track_history(db: Session = Depends(get_db)):
         .order_by(Track.added_at.desc())
         .all()
     )
+@router.delete("/delete/{track_id}")
+def delete_track(track_id: int, db: Session = Depends(get_db)):
 
+    track = db.query(Track).filter(Track.id == track_id).first()
+
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+
+    db.delete(track)
+    db.commit()
+
+    return {"status": "deleted", "track_id": track_id}
 # @router.post("/current-track")
 # async def set_track(payload: Track):
 #     try:

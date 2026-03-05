@@ -1,4 +1,6 @@
 import asyncio
+
+import aiohttp
 import requests
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
@@ -8,7 +10,7 @@ from config import BOT_TOKEN, API_URL,GET_ADMIN
 from state import AddTrack
 
 bot = Bot(BOT_TOKEN)
-dpa = Dispatcher()
+dp = Dispatcher()
 
 def is_admin(telegram_id: int) -> bool:
     response = requests.get(f"{API_URL}/admin/get_admin", params={"telegram_id": telegram_id})
@@ -17,14 +19,14 @@ def is_admin(telegram_id: int) -> bool:
     else:
         return False
 
-@dpa.message(Command('start'))
+@dp.message(Command('start'))
 async def start(message: Message, state: FSMContext):
     if not is_admin(message.from_user.id):
         await message.answer("Ты не админ")
         return
     await message.answer("Привет! Для добавления нового трека отправь команду /add")
 
-@dpa.message(Command("add"))
+@dp.message(Command("add"))
 async def start_add(message: Message, state: FSMContext):
     if not is_admin(message.from_user.id):
         await message.answer("Ты не админ")
@@ -33,7 +35,7 @@ async def start_add(message: Message, state: FSMContext):
     await state.set_state(AddTrack.waiting_for_url)
 
 
-@dpa.message(AddTrack.waiting_for_url)
+@dp.message(AddTrack.waiting_for_url)
 async def process_url(message: Message, state: FSMContext):
     await state.update_data(url=message.text.strip())
     await message.answer("Теперь отправь название трека:")
@@ -41,7 +43,7 @@ async def process_url(message: Message, state: FSMContext):
 
 
 
-@dpa.message(AddTrack.waiting_for_title)
+@dp.message(AddTrack.waiting_for_title)
 async def process_title(message: Message, state: FSMContext):
     data = await state.get_data()
 
@@ -65,8 +67,45 @@ async def process_title(message: Message, state: FSMContext):
 
     await state.clear()
 
+@dp.message(Command("history"))
+async def history(message: Message):
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"{API_URL}/tracks/history") as resp:
+
+            tracks = await resp.json()
+
+            text = ""
+
+            for t in tracks:
+                text += f"{t['id']} — {t['title']}\n"
+
+            await message.answer(text or "История пустая")
+
+@dp.message(Command("delete"))
+async def delete_track(message: Message):
+
+    if not is_admin(message.from_user.id):
+        await message.answer("Нет прав")
+        return
+
+    parts = message.text.split()
+
+    if len(parts) != 2:
+        await message.answer("Использование: /delete ID")
+        return
+
+    track_id = parts[1]
+
+    async with aiohttp.ClientSession() as session:
+        async with session.delete(f"{API_URL}/tracks/delete/{track_id}") as resp:
+
+            if resp.status == 200:
+                await message.answer(f"Трек {track_id} удалён")
+            else:
+                await message.answer("Ошибка удаления")
 
 if __name__ == "__main__":
-    asyncio.run(dpa.start_polling(bot))
+    asyncio.run(dp.start_polling(bot))
 
 
