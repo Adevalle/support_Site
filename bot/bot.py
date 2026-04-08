@@ -119,15 +119,6 @@ async def add_adm_start(message: Message, state: FSMContext):
 
 
 @dp.message(AddAdmin.waiting_for_id)
-async def add_adm_start(message: Message, state: FSMContext):
-    if not message.from_user.id != Config.ADMIN:
-        await message.answer("Нет прав")
-        return
-
-    await message.answer("Напиши ID")
-    await state.set_state(AddAdmin.waiting_for_id)
-
-@dp.message(AddAdmin.waiting_for_id)
 async def add_admin_id(message: Message, state: FSMContext):
     await state.update_data(id=message.text.strip())
     await message.answer("Напиши имя:")
