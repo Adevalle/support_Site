@@ -6,14 +6,17 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from config import BOT_TOKEN, API_URL,GET_ADMIN
-from state import AddTrack
 
-bot = Bot(BOT_TOKEN)
+
+from config import Config
+from state import AddTrack,AddAdmin
+
+
+bot = Bot(Config.BOT_TOKEN)
 dp = Dispatcher()
 
 def is_admin(telegram_id: int) -> bool:
-    response = requests.get(f"{API_URL}/admin/get_admin", params={"telegram_id": telegram_id})
+    response = requests.get(f"{Config.API_URL}/admin/get_admin", params={"telegram_id": telegram_id})
     if response.status_code == 200:
         return True
     else:
@@ -55,7 +58,7 @@ async def process_title(message: Message, state: FSMContext):
     }
 
     try:
-        response = requests.post(f"{API_URL}/tracks/current", json=payload)
+        response = requests.post(f"{Config.API_URL}/tracks/current", json=payload)
 
         if response.status_code == 200:
             await message.answer("Трек успешно добавлен.")
@@ -71,7 +74,7 @@ async def process_title(message: Message, state: FSMContext):
 async def history(message: Message):
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{API_URL}/tracks/history") as resp:
+        async with session.get(f"{Config.API_URL}/tracks/history") as resp:
 
             tracks = await resp.json()
 
@@ -98,12 +101,71 @@ async def delete_track(message: Message):
     track_id = parts[1]
 
     async with aiohttp.ClientSession() as session:
-        async with session.delete(f"{API_URL}/tracks/delete/{track_id}") as resp:
+        async with session.delete(f"{Config.API_URL}/tracks/delete/{track_id}") as resp:
 
             if resp.status == 200:
                 await message.answer(f"Трек {track_id} удалён")
             else:
                 await message.answer("Ошибка удаления")
+
+@dp.message(Command('add_adm'))
+async def add_adm_start(message: Message, state: FSMContext):
+    if not message.from_user.id != Config.ADMIN:
+        await message.answer("Нет прав")
+        return
+
+    await message.answer("Напиши ID")
+    await state.set_state(AddAdmin.waiting_for_id)
+
+
+@dp.message(AddAdmin.waiting_for_id)
+async def add_adm_start(message: Message, state: FSMContext):
+    if not message.from_user.id != Config.ADMIN:
+        await message.answer("Нет прав")
+        return
+
+    await message.answer("Напиши ID")
+    await state.set_state(AddAdmin.waiting_for_id)
+
+@dp.message(AddAdmin.waiting_for_id)
+async def add_admin_id(message: Message, state: FSMContext):
+    await state.update_data(id=message.text.strip())
+    await message.answer("Напиши имя:")
+    await state.set_state(AddAdmin.waiting_for_name)
+
+
+@dp.message(AddAdmin.waiting_for_name)
+async def add_admin_end(message: Message, state: FSMContext):
+    await state.update_data(name=message.text.strip())
+    data = await state.get_data()
+    try:
+        payload = {
+            "telegram_id":data["id"],
+            "username":data["name"]
+            }
+        response = requests.post(f"{Config.API_URL}/tracks/current", params= payload)
+
+        if response.status_code == 200:
+            await message.answer("Админ успешно добавлен.")
+        else:
+            await message.answer(f"Ошибка API: {response.text}, data: {payload}")
+
+    except Exception as e:
+        await message.answer(f"Ошибка запроса: {e}")
+
+    await state.clear()
+
+
+
+
+
+
+@dp.message(AddAdmin.waiting_for_name)
+async def add_admin(message: Message):
+    await message.answer("Добавлен админ:")
+
+
+
 
 if __name__ == "__main__":
     asyncio.run(dp.start_polling(bot))
