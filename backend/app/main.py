@@ -48,9 +48,9 @@ async def index(request: Request):
     for track in history:
         print(track.admin)
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
+        name="index.html",
+        request=request,
+        context={
             "current_track": current_track,
             "history": history,
         }
