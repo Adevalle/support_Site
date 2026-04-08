@@ -134,7 +134,7 @@ async def add_admin_end(message: Message, state: FSMContext):
             "telegram_id":data["id"],
             "username":data["name"]
             }
-        response = requests.post(f"{Config.API_URL}/tracks/current", params= payload)
+        response = requests.post(f"{Config.API_URL}/admin/add", params= payload)
 
         if response.status_code == 200:
             await message.answer("Админ успешно добавлен.")
