@@ -10,6 +10,8 @@ from app.db.models import Base, Track
 
 from sqlalchemy.orm import Session
 
+from pathlib import Path
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -17,9 +19,12 @@ app.include_router(admin_router)
 app.include_router(track_router)
 
 
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-templates = Jinja2Templates(directory="app/templates")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")))
+
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
