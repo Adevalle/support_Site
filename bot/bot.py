@@ -110,7 +110,7 @@ async def delete_track(message: Message):
 
 @dp.message(Command('add_adm'))
 async def add_adm_start(message: Message, state: FSMContext):
-    if not message.from_user.id != Config.ADMIN:
+    if message.from_user.id != Config.ADMIN:
         await message.answer("Нет прав")
         return
 
